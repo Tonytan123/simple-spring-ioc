@@ -3,6 +3,7 @@ package com.tucker.framework.ioc.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tucker.framework.ioc.bean.BeanDefinition;
 
 import java.io.InputStream;
 
@@ -81,5 +82,14 @@ public class JsonUtils {
         } catch (JsonProcessingException e) {
             return null;
         }
+    }
+
+    private Object createBean(BeanDefinition beanDefinition) throws Exception{
+        String beanName = beanDefinition.getClassName();
+        Class bean = ClassUtils.loadClass(beanName);
+        if(bean == null) {
+            throw new Exception("System cannot find bean by class name.");
+        }
+
     }
 }
