@@ -84,12 +84,4 @@ public class JsonUtils {
         }
     }
 
-    private Object createBean(BeanDefinition beanDefinition) throws Exception{
-        String beanName = beanDefinition.getClassName();
-        Class bean = ClassUtils.loadClass(beanName);
-        if(bean == null) {
-            throw new Exception("System cannot find bean by class name.");
-        }
-
-    }
 }
