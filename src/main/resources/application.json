@@ -1,0 +1,14 @@
+[
+  {
+    "name" : "Robot",
+    "className" : "com.tucker.framework.ioc.entity.Robot"
+  },
+  {
+    "name" : "Hand",
+    "className" : "com.tucker.framework.ioc.entity.Hand"
+  },
+  {
+    "name" : "Mouth",
+    "className" : "com.tucker.framework.ioc.entity.Mouth"
+  }
+]

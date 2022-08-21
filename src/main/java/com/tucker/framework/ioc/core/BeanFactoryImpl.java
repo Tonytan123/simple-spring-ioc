@@ -4,8 +4,11 @@ import com.tucker.framework.ioc.bean.BeanDefinition;
 import com.tucker.framework.ioc.bean.ConstructArg;
 import com.tucker.framework.ioc.utils.BeanUtils;
 import com.tucker.framework.ioc.utils.ClassUtils;
+import com.tucker.framework.ioc.utils.ReflectionUtils;
+
 import java.lang.reflect.Constructor;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -22,8 +25,25 @@ public class BeanFactoryImpl implements BeanFactory{
     private static final Set<String> beanNameSet = Collections.synchronizedSet(new HashSet<>());
 
     @Override
-    public Object getBean(String name) throws Exception {
-        return null;
+    public Object getBean(String name) {
+        Object bean = beanMap.get(name);
+        if(bean != null){
+            return bean;
+        }
+        try {
+            bean = createBean(beanDefinitionMap.get(name));
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new Object();
+        }
+        if(bean != null) {
+            // inject parameters
+            populateBean(bean);
+
+            // save object to beanMap
+            beanMap.put(name, bean);
+        }
+        return bean;
     }
 
     private Object createBean(BeanDefinition beanDefinition) throws Exception {
@@ -41,7 +61,7 @@ public class BeanFactoryImpl implements BeanFactory{
                 }else {
                     objectList.add(getBean(o.getName()));
                 }
-                return ;
+                return null;
             });
             Class[] constructOrArgTypes = objectList.stream().map(o -> o.getClass())
                     .collect(Collectors.toList()).toArray(new Class[]{});
@@ -49,6 +69,30 @@ public class BeanFactoryImpl implements BeanFactory{
             return BeanUtils.instanceByCglib(bean, constructor, objectList.toArray());
         } else {
             return BeanUtils.instanceByCglib(bean, null, null);
+        }
+    }
+
+    protected void registerBean(String name, BeanDefinition bd) {
+        beanDefinitionMap.put(name, bd);
+        beanNameSet.add(name);
+    }
+
+    private void populateBean(Object bean) {
+        Field[] fields = bean.getClass().getSuperclass().getFields();
+        if(fields.length > 0) {
+            for (Field field : fields){
+                String beanName = (field.getName());
+                if(beanNameSet.contains(beanName)) {
+                    Object fieldBean = getBean(beanName);
+                    if (fieldBean != null) {
+                        try {
+                            ReflectionUtils.injectField(field, bean, fieldBean);
+                        } catch (Exception e){
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                }
+            }
         }
     }
 }
