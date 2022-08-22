@@ -78,7 +78,7 @@ public class BeanFactoryImpl implements BeanFactory{
     }
 
     private void populateBean(Object bean) {
-        Field[] fields = bean.getClass().getSuperclass().getFields();
+        Field[] fields = bean.getClass().getSuperclass().getDeclaredFields();
         if(fields.length > 0) {
             for (Field field : fields){
                 String beanName = (field.getName());

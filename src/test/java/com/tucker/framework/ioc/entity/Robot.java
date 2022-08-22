@@ -8,6 +8,9 @@ public class Robot {
 
     private Mouth mouth;
 
+    public Robot() {
+    }
+
     public void start() {
         hand.WaveHand();
         mouth.speak();

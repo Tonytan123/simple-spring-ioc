@@ -12,7 +12,7 @@ public class Test {
         JsonApplicationContext jsonApplicationContext =
                 new JsonApplicationContext("application.json");
         jsonApplicationContext.init();
-        Robot robot = (Robot) jsonApplicationContext.getBean("Robot");
+        Robot robot = (Robot) jsonApplicationContext.getBean("robot");
         robot.start();
     }
 }
